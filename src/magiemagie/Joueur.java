@@ -13,8 +13,17 @@ import java.util.ArrayList;
  */
 public class Joueur {
 
-    protected String nom;
-    protected ArrayList<Carte> cartes = new ArrayList<>();
+    private String nom;
+    private ArrayList<Carte> cartes = new ArrayList<>();
+    private int sommeil;
+
+    public int getSommeil() {
+        return sommeil;
+    }
+
+    public void setSommeil(int sommeil) {
+        this.sommeil = sommeil;
+    }
 
     public String getNom() {
         return nom;

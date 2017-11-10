@@ -20,7 +20,7 @@ public class Carte {
     }
     
     
-    protected TypeCarte type;
+    private TypeCarte type;
 
     public TypeCarte getType() {
         return type;
@@ -34,23 +34,12 @@ public class Carte {
     public String toString() {
         return type.toString();
     }
-
-//    @Override
-//    public boolean equals(Object obj) {
-//        
-//        
-//        Carte carte2 = (Carte) obj;
-//        
-//        return this.type.toString().equals( carte2.getType().toString() );
-//    }
     
-    
-//    @Override
-//    public boolean equals(Object obj) {
-//        Carte carte2 = (Carte) obj;
-//        
-//        return 
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        Carte cc = (Carte) obj;
+        return (this.getType() == cc.getType() );
+    }
     
 
 
