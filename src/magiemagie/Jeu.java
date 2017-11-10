@@ -121,64 +121,65 @@ public class Jeu {
         // Déroulement de la partie
         while (encore) {
             joueurEnCours = joueurs.get(joueurCourant);
-            //System.out.println("Ingred du joueur : " + joueurEnCours.getCartes());
+            // affichage des infos du joueur courant
+            System.out.println(">>>> Joueur en cours : " + joueurEnCours.getNom() + " <<<<<<");
+            System.out.println("     Cartes : : " + joueurEnCours.getCartes());
 
             // affichage des sorts du joueur courant
-            System.out.println(">>>> Joueur en cours : " + joueurEnCours.getNom());
             ind = 1;
+            // Liste des sorts lancables pour le joueur courant
             ArrayList<String> sortPossible = new ArrayList<>();
 
-            //System.out.println("Tous les sorts : " + sorts);
+            // Listes temporaire (pour realiser comparaison containsAll)
             ArrayList<String> tmpStr1 = new ArrayList<>();
             ArrayList<String> tmpStr2 = new ArrayList<>();
             for (Carte xx : joueurEnCours.getCartes()) {
                 tmpStr1.add(xx.toString());
             }
-//            System.out.println("str1 : " + tmpStr1);
-
             for (Sort s : sorts) {
-                //System.out.println("Ingred : " + s.getIngredients());
                 tmpStr2.clear();
-                //System.out.println("suite");
                 for (TypeCarte ii : s.getIngredients()) {
                     tmpStr2.add(ii.toString());
-                    //System.out.println(ii);
                 }
-
-                //System.out.println(tmpStr2);
                 if (tmpStr1.containsAll(tmpStr2)) {
                     sortPossible.add(s.nom);
                 }
             }
-//
 
-            //System.out.println(sortPossible);
+            // afichage du Menu joueur
+            // Sorts lancables
             for (String s : sortPossible) {
                 System.out.println(ind + ") " + s);
                 ind++;
             }
-
+            // fin du menu
             System.out.println("p) Passer son tour");
             System.out.println("q) quitter la partie");
             System.out.print("------>  votre choix : ");
             saisieClav = (new Scanner(System.in).next()).trim();
-
             if (saisieClav.equals("q")) {
                 encore = false;
             } else {
-                if (!saisieClav.equals("p")) {
+                if (saisieClav.equals("p")) {
+                    // Passer son trour
+
+                    // Ajout d'une carte
+                    ajoutUneCarteAleatoire();
+                } else {
                     choixSort = Integer.parseInt(saisieClav);
                     // test si hors limite
                     if (choixSort > 0 && choixSort <= sortPossible.size()) {
                         choixSort--;
-                        System.out.println(sortPossible.get(choixSort));
+                        System.out.println("Excellent choix");
+                        //System.out.println(sortPossible.get(choixSort));
 
-                        System.out.println(joueurs.get(joueurCourant).getCartes());
-
+                        //System.out.println(joueurs.get(joueurCourant).getCartes());
                         // enlever les 2 cartes du sort
-                        enleverCartes(joueurCourant, sortPossible.get(choixSort));
+                        enleverCartes(sortPossible.get(choixSort));
 
-                        System.out.println(joueurs.get(joueurCourant).getCartes());
+                        //System.out.println(joueurs.get(joueurCourant).getCartes());
+                        // Traitements des sorts
+                        this.gererSort(sortPossible.get(choixSort));
 
                     }
 
@@ -257,6 +258,8 @@ public class Jeu {
         int nombreAleatoire;
         // Distribuer nbCarte cartes à chaque joueur
         for (Joueur j : joueurs) {
+            // réinitialise le tableau de carte
+            j.getCartes().clear();
             // traitement des cartes
             for (int i = 0; i < nbCarte; i++) {
                 tempocarte = new Carte();
@@ -267,27 +270,100 @@ public class Jeu {
         }
     }
 
-    public void gestionSort() {
-
+    public void ajoutUneCarteAleatoire() {
+        // ajout d'un carte aléatoire au joueur courant quand il passe son tour
+        Carte tempocarte;
+        Random rand = new Random();
+        int nombreAleatoire;
+        // Distribuer nbCarte cartes à chaque joueur
+        tempocarte = new Carte();
+        nombreAleatoire = rand.nextInt(5); // nbre aleat entre 0 et 4
+        tempocarte.setType(tabTypCart[nombreAleatoire]);
+        joueurEnCours.getCartes().add(tempocarte);
     }
 
-    public void enleverCartes(int jcourant, String sortChoisi) {
+    public void gererSort(String sortChoisi) {
+        Random rand = new Random();
+        int nombreAleatoire;
+
+        // Selon les cas 
+        switch (sortChoisi) {
+            case "INVISIBILITE":
+                // prend une carte sur chacun des joueurs
+
+                // balayage de tous les joueurs
+                for (Joueur joueur : joueurs) {
+                    // ne pas traiter le joueur courant
+                    if (joueur != joueurEnCours) {
+                        // pour chaque adversaire
+
+                        // vérification si au moins une carte
+                        if (joueur.cartes.size() >= 1) {
+                            // nombreAleatoire en fonction du nombre de cartes
+                            nombreAleatoire = rand.nextInt(joueur.cartes.size());
+                            // ajout d'une carte provenant d'un adversaire
+                            joueurEnCours.cartes.add(joueur.cartes.get(nombreAleatoire));
+                            // suppression de la carte de l'adversaire
+                            joueur.cartes.remove(nombreAleatoire);
+                        }
+                    }
+                }
+
+                break;
+            case "FILTRE D’AMOUR":
+                
+                System.out.println( joueurEnCours.nom );
+                
+                Joueur[] tabJoueur = new Joueur[joueurs.size()];
+                
+                
+                
+
+                break;
+            case "HYPNOSE":
+
+                break;
+            case "DIVINATION":
+                // afficher les cartes des joueurs
+
+                for (Joueur joueur : joueurs) {
+                    if (joueur != joueurEnCours) {
+                        System.out.println(joueur);
+                    }
+                }
+
+                break;
+            case "SOMMEIL-PROFOND":
+
+                break;
+
+            default:
+
+        }
+
+    }
+    
+
+    public void enleverCartes(String sortChoisi) {
         Carte uneCarte = new Carte();
 
         for (Sort s : sorts) {
             if (s.nom.equals(sortChoisi)) {
-                //system.out.println(s.nom);
                 for (TypeCarte ii : s.getIngredients()) {
-                    //System.out.println(ii);
-
-                    Iterator<Carte> it = joueurs.get(jcourant).getCartes().iterator();
+                    Iterator<Carte> it = joueurEnCours.getCartes().iterator();
                     while (it.hasNext()) {
                         if (it.next().getType().equals(ii)) {
                             it.remove();
                             break;
                         }
                     }
+                }
+            }
+        }
+    }
+}
 
+// old version
 //                    for (Carte carte : joueurs.get(jcourant).getCartes()) {
 //                        //System.out.println(carte.toString());
 //                        if (ii.toString().equals(carte.toString())) {
@@ -297,13 +373,6 @@ public class Jeu {
 //                            //joueurs.get(jcourant).getCartes().remove(carte);
 //                        }
 //                    }
-
-                }
-            }
-        }
-    }
-}
-
 //String strTypeCarte = Carte.TypeCarte.BAVE_DE_CRAPAUD.toString(); 
 //Carte.TypeCarte uu = Carte.TypeCarte.valueOf(strTypeCarte);
 //        Iterator<Friend> it = list.iterator();
