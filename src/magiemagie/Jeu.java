@@ -107,10 +107,6 @@ public class Jeu {
         int joueurCourant;
         boolean encore = true;
 
-        int ind;
-        String saisieClav;
-        int choixSort;
-
         // Distribuer 7 cartes à chaque joueur et RAZ sommeil
         ajoutCarteAleatoire(7);
 
@@ -121,75 +117,19 @@ public class Jeu {
         while (encore) {
             joueurEnCours = joueurs.get(joueurCourant);
             // affichage des infos du joueur courant
+            System.out.println("------------------------");
             System.out.println(">>>> Joueur en cours : " + joueurEnCours.getNom() + " <<<<<<");
             System.out.println("     Cartes : : " + joueurEnCours.getCartes());
 
             if (joueurEnCours.getSommeil() > 0) {
-                // passage d'un tour
-                joueurEnCours.setSommeil(joueurEnCours.getSommeil() - 1);
-                // le joueur est endormi
-                System.out.println("     dort pendant encore " + (joueurEnCours.getSommeil() + 1) + " tour(s) ");
-
+                this.gererJoueurEnSommeil();
             } else {
+                if (joueurEnCours.getCartes().isEmpty()) {
+                    // Cas du joueur spectateur
+                    System.out.println("     est spectateur");
 
-                // affichage des sorts du joueur courant
-                ind = 1;
-                // Liste des sorts lancables pour le joueur courant
-                ArrayList<String> sortPossible = new ArrayList<>();
-
-                // Listes temporaire (pour realiser comparaison containsAll)
-                ArrayList<String> tmpStr1 = new ArrayList<>();
-                ArrayList<String> tmpStr2 = new ArrayList<>();
-                for (Carte xx : joueurEnCours.getCartes()) {
-                    tmpStr1.add(xx.toString());
-                }
-                for (Sort s : sorts) {
-                    tmpStr2.clear();
-                    for (TypeCarte ii : s.getIngredients()) {
-                        tmpStr2.add(ii.toString());
-                    }
-                    if (tmpStr1.containsAll(tmpStr2)) {
-                        sortPossible.add(s.nom);
-                    }
-                }
-
-                // afichage du Menu joueur
-                // Sorts lancables
-                for (String s : sortPossible) {
-                    System.out.println(ind + ") " + s);
-                    ind++;
-                }
-                // fin du menu
-                System.out.println("p) Passer son tour");
-                System.out.println("q) quitter la partie");
-                System.out.print("------>  votre choix : ");
-                saisieClav = (new Scanner(System.in).next()).trim();
-                if (saisieClav.equals("q")) {
-                    encore = false;
                 } else {
-                    if (saisieClav.equals("p")) {
-                        // Passer son trour
-
-                        // Ajout d'une carte
-                        ajoutUneCarteAleatoire();
-                    } else {
-                        choixSort = Integer.parseInt(saisieClav);
-                        // test si hors limite
-                        if (choixSort > 0 && choixSort <= sortPossible.size()) {
-                            choixSort--;
-                            System.out.println("Excellent choix");
-                            //System.out.println(sortPossible.get(choixSort));
-
-                            //System.out.println(joueurs.get(joueurCourant).getCartes());
-                            // enlever les 2 cartes du sort
-                            enleverCartes(sortPossible.get(choixSort));
-
-                            //System.out.println(joueurs.get(joueurCourant).getCartes());
-                            // Traitements des sorts
-                            this.gererSort(sortPossible.get(choixSort));
-
-                        }
-                    }
+                    this.afficherMenuJoueur();
                 }
             }
 
@@ -202,9 +142,9 @@ public class Jeu {
                 }
             }
 
-            if (joueurs.size() == 1) {
+            if (joueurs.size() == 1) { // revoir
                 encore = false;
-                System.out.println("Bravo, " + joueurs.get(joueurCourant).getNom() + " ! Vous avez gagné");
+                System.out.println("Bravo, " + joueurEnCours.getNom() + " ! Vous avez gagné");
             }
         }
     }
@@ -338,19 +278,20 @@ public class Jeu {
             case "HYPNOSE":
                 // Choix d'un joueur cible
                 cible = this.selectionnerJoueur();
-
+                // sélection d'une carte
                 Carte uneCarte = this.selectionnerCarte(joueurEnCours.getCartes());
-                // on retire cette carte au joueur en cours
+                // Retirer cette carte au joueur en cours et la mémoriser
                 joueurEnCours.getCartes().remove(uneCarte);
-
+                // Retirer 3 cartes du joueur cible que l'on donne au joueur en cours
                 for (int i = 0; i < 3; i++) {
                     if (cible.getCartes().size() > 0) {
                         nombreAleatoire = rand.nextInt(cible.getCartes().size());
-                        //System.out.println(i +" , "+nombreAleatoire);
                         joueurEnCours.getCartes().add(cible.getCartes().get(nombreAleatoire));
                         cible.getCartes().remove(nombreAleatoire);
                     }
                 }
+                // Ajouter la carte mémorisé au joueur cible
+                cible.getCartes().add(uneCarte);
 
                 break;
 
@@ -427,11 +368,6 @@ public class Jeu {
 
         tabCarte = cartes.toArray(tabCarte);
 
-//        for (Carte jj : cartes) {
-//            if (jj != joueurEnCours) {
-//                tabCarte[cpt] = jj;
-//            }
-//        }
         // Afficher les cartes
         while (encore) {
 
@@ -469,8 +405,99 @@ public class Jeu {
             }
         }
     }
+
+    private void creationListSortPossibleOld(ArrayList<String> sortPossible) {
+        // Listes temporaire (pour realiser comparaison containsAll)
+        ArrayList<String> tmpStr1 = new ArrayList<>();
+        ArrayList<String> tmpStr2 = new ArrayList<>();
+        for (Carte xx : joueurEnCours.getCartes()) {
+            tmpStr1.add(xx.toString());
+        }
+        for (Sort s : sorts) {
+            tmpStr2.clear();
+            for (TypeCarte ii : s.getIngredients()) {
+                tmpStr2.add(ii.toString());
+            }
+            if (tmpStr1.containsAll(tmpStr2)) {
+                sortPossible.add(s.nom);
+            }
+        }
+    }
+
+    private void creationListSortPossible(ArrayList<String> sortPossible) {
+        // constitution de la liste sortPossible du joueur en cour
+
+        ArrayList<Carte> tmpACarte = new ArrayList<>();
+        Carte tmpCarte;
+        for (Sort s : sorts) {
+            tmpACarte.clear();
+            for (Carte.TypeCarte t : s.ingredients) {
+                tmpCarte = new Carte();
+                tmpCarte.setType(t);
+                tmpACarte.add(tmpCarte);
+            }
+            if (joueurEnCours.getCartes().containsAll(tmpACarte)) {
+                sortPossible.add(s.nom);
+            }
+        }
+    }
+
+    private void afficherMenuJoueur() {
+        int ind;
+        String saisieClav;
+        int choixSort;
+
+        // affichage des sorts du joueur courant
+        // Liste des sorts lancables pour le joueur courant
+        ArrayList<String> sortPossible = new ArrayList<>();
+
+        this.creationListSortPossible(sortPossible);
+
+        // afichage du Menu joueur
+        // Sorts lancables
+        ind = 1;
+        for (String s : sortPossible) {
+            System.out.println(ind + ") " + s);
+            ind++;
+        }
+        // fin du menu
+        System.out.println("p) Passer son tour");
+        System.out.println("q) quitter la partie");
+        System.out.print("------>  votre choix : ");
+
+        saisieClav = (new Scanner(System.in).next()).trim();
+        if (saisieClav.equals("q")) {
+            //encore = false;
+        } else {
+            if (saisieClav.equals("p")) {
+                // Passer son tour
+                // Ajout d'une carte
+                ajoutUneCarteAleatoire();
+            } else {
+                choixSort = Integer.parseInt(saisieClav);
+                // test si hors limite
+                if (choixSort > 0 && choixSort <= sortPossible.size()) {
+                    choixSort--;
+                    System.out.println("Excellent choix");
+                    // enlever les 2 cartes du sort
+                    enleverCartes(sortPossible.get(choixSort));
+                    // Traitements des sorts
+                    this.gererSort(sortPossible.get(choixSort));
+
+                }
+            }
+        }
+    }
+
+    private void gererJoueurEnSommeil() {
+        // passage d'un tour
+        joueurEnCours.setSommeil(joueurEnCours.getSommeil() - 1);
+        // le joueur est endormi
+        System.out.println("     dort pendant encore " + (joueurEnCours.getSommeil() + 1) + " tour(s) ");
+    }
 }
 
+//____________________________________________
 // old version
 //                    for (Carte carte : joueurs.get(jcourant).getCartes()) {
 //                        //System.out.println(carte.toString());
