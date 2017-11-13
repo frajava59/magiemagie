@@ -8,7 +8,6 @@ package magiemagie.test;
 import java.util.ArrayList;
 import magiemagie.Carte;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -32,6 +31,16 @@ public class RemoveTest {
         Carte c3 = new Carte();
         c3.setType(Carte.TypeCarte.MANDRAGORE);
         cartes.add(c3);
+        
+        
+        ArrayList<Carte.TypeCarte> titi = new ArrayList<>();
+                        
+        titi.add(Carte.TypeCarte.CORNE_DE_LICORNE);
+        titi.add(c1.getType());
+        
+        System.out.println("titi : "+titi);
+        System.out.println("cartes : "+cartes);
+
 
         Carte carteSortA = new Carte();
         carteSortA.setType(Carte.TypeCarte.MANDRAGORE);

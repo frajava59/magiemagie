@@ -13,11 +13,11 @@ import java.util.ArrayList;
  */
 public class Sort {
 
-    protected String nom;
-    protected ArrayList<Carte.TypeCarte> ingredients;
-    protected String description;
+    private String nom;
+    private ArrayList<Carte> ingredients;
+    private String description;
 
-    public Sort(String nom, ArrayList<Carte.TypeCarte> ingredients, String description) {
+    public Sort(String nom, ArrayList<Carte> ingredients, String description) {
         this.nom = nom;
         this.ingredients = ingredients;
         this.description = description;
@@ -31,11 +31,11 @@ public class Sort {
         this.nom = nom;
     }
 
-    public ArrayList<Carte.TypeCarte> getIngredients() {
+    public ArrayList<Carte> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(ArrayList<Carte.TypeCarte> ingredients) {
+    public void setIngredients(ArrayList<Carte> ingredients) {
         this.ingredients = ingredients;
     }
 

@@ -13,9 +13,26 @@ import java.util.ArrayList;
  */
 public class Joueur {
 
+    public enum TypeIA {
+        HUMAINE,
+        RANDOM,
+        PRUDENT,
+        AGRESSIF,
+        OPTIM
+    }
+
     private String nom;
     private ArrayList<Carte> cartes = new ArrayList<>();
     private int sommeil;
+    private TypeIA ia;
+
+    public TypeIA getIa() {
+        return ia;
+    }
+
+    public void setIa(TypeIA ia) {
+        this.ia = ia;
+    }
 
     public int getSommeil() {
         return sommeil;
@@ -43,10 +60,10 @@ public class Joueur {
 
     @Override
     public String toString() {
-        String txt="";
-        txt+="Nom : " + nom+"\n";
-        txt+="Cartes : " + cartes+"\n";
-        
+        String txt = "";
+        txt += "Nom : " + nom + "\n";
+        txt += "Cartes : " + cartes + "\n";
+
         return txt;
 
 //        System.out.println("Cartes : ");
@@ -66,7 +83,7 @@ public class Joueur {
         System.out.println("Cartes : ");
         if (cartes != null && cartes.size() != 0) {
             for (Carte c : cartes) {
-                System.out.println(c.getType().toString() );
+                System.out.println(c.getType().toString());
             }
         } else {
             System.out.println("Pas de carte");

@@ -6,6 +6,7 @@
 package magiemagie;
 
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,6 +19,8 @@ public class PointEntree {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        
+        
 
         Jeu j1 = new Jeu();
         
