@@ -70,7 +70,7 @@ public class Jeu {
                         joueurs.add(j2);
                     }
                     if (joueurs.size() < 2) {
-                        System.err.println(">>>  Pas assez de joueur !");
+                        System.out.println(">>>  Pas assez de joueur !");
                     } else {
                         gererPartie();
                     }
@@ -473,7 +473,7 @@ public class Jeu {
                 if (choixJoueur >= 0 && choixJoueur < tabJoueur.length) {
                     return tabJoueur[choixJoueur];
                 } else {
-                    System.err.println("choix incorrect");
+                    System.out.println("choix incorrect");
                 }
             }
         }
@@ -504,7 +504,11 @@ public class Jeu {
             System.out.print("Votre choix : ");
             saisieClav = new Scanner(System.in).next();
             if (!saisieClav.isEmpty()) {
-                choixCarte = Integer.parseInt(saisieClav) - 1;
+                try {
+                    choixCarte = Integer.parseInt(saisieClav) - 1;
+                } catch (NumberFormatException e) {
+                    choixCarte = -1;
+                }
                 if (choixCarte >= 0 && choixCarte < tabCarte.length) {
                     return tabCarte[choixCarte];
                 }
